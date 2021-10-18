@@ -5,16 +5,7 @@ from api import auth, routes
 from config import settings
 import uvicorn
 
-
-app = fastapi.FastAPI(title="GRS",
-
-                      description="Grievance Redress  system",
-                      version="0.1.0",
-                      license_info={
-                          "name": "Apache 2.0",
-                          "url": "https://www.apache.org/licenses/LICENSE-2.0.html"},
-                     )
-
+app = fastapi.FastAPI(title="GRS", description="Grievance Redress  system", version="0.1.0")
 
 
 def configure():

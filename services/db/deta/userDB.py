@@ -1,17 +1,19 @@
-from typing import Optional, List
+from typing import Optional
 
 from deta import Deta
+from pydantic import UUID4
+
 from config import settings
 
-from models.user import User, UserInDB
+from models.user import User, UserInDB, UserSerialized
 
 deta = Deta(settings.DETA_BASE_KEY)  # configure your Deta project
 users_db = deta.Base('users')
 user_history_db = deta.Base('UserHistory')
 
 
-async def get_user_from_id(key: str) -> Optional[UserInDB]:
-    user = users_db.get(str(key))
+async def get_user_from_id(key: UUID4) -> Optional[UserInDB]:
+    user = users_db.get(key.hex)
     if user:
         return UserInDB(**user)
     else:
@@ -28,7 +30,7 @@ async def get_user_from_username_db(username: str) -> Optional[UserInDB]:
 
 
 async def create_new_user_to_db(user: UserInDB) -> UserInDB:
-    user = users_db.insert(user.dict())
+    user = users_db.insert(UserSerialized(**user.dict()).dict())
     return UserInDB(**user)
 
 
@@ -47,5 +49,3 @@ async def update_password_to_db(hashed_password, userindb: User) -> UserInDB:
     v = userindb.dict()
     v['hashed_password'] = hashed_password
     return users_db.put(v, key=userindb.key)
-
-

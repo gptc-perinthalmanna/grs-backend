@@ -1,8 +1,9 @@
 import datetime
-from typing import Optional, List
+from typing import Optional, List, Any
 from pydantic import BaseModel, HttpUrl, validator, EmailStr, UUID4
 from enum import Enum
 import re
+
 
 class Token(BaseModel):
     access_token: str
@@ -39,7 +40,6 @@ class User(BaseModel):
     username: str
     email: EmailStr
     disabled: Optional[bool] = False
-    roles: Optional[List] = ['User']
     first_name: str
     last_name: str
     contact_number: int
@@ -96,3 +96,21 @@ class ChangePassword(BaseModel):
     password: str
     new_password: str
     repeat_password: str
+
+
+class UserSerialized(User):
+    key: Optional[Any]
+    createdAt: Optional[Any]
+    updatedAt: Optional[Any]
+
+    @validator('key')
+    def serialize_key(cls, v):
+        return v.hex
+
+    @validator('createdAt')
+    def serialize_ca(cls, v):
+        return v.isoformat()
+
+    @validator('updatedAt')
+    def serialize_ua(cls, v):
+        return v.isoformat()

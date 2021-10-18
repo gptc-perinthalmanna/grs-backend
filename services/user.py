@@ -1,15 +1,16 @@
+import hashlib
+import uuid
 from datetime import datetime, timedelta
 from typing import Optional
 
-import hashlib, uuid
 from fastapi import HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from passlib.context import CryptContext
 from starlette import status
 
-from models.user import UserInDB, User, UserCreate, UserEdit
 from config import settings
+from models.user import UserSerialized, User, UserCreate, UserInDB, UserEdit
 from services.db.deta import userDB
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -45,14 +46,14 @@ async def authenticate_user(username: str, password: str):
     return User(**user.dict())
 
 
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
-    to_encode = data.copy()
+def create_access_token(data: UserCreate, expires_delta: Optional[timedelta] = None):
+    to_encode = data.dict()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
+        expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(UserSerialized(**to_encode).dict(), SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
 
@@ -215,6 +216,6 @@ def populate_fields(user: UserCreate) -> UserCreate:
         hash_object = hashlib.md5(email.encode())
         md5_hash = hash_object.hexdigest()
         user.avatar = f'https://www.gravatar.com/avatar/{md5_hash}?s=400&d=robohash'
-    user.createdAt=datetime.now().isoformat()
-    user.updatedAt=datetime.now().isoformat()
+    user.createdAt = datetime.now().isoformat()
+    user.updatedAt = datetime.now().isoformat()
     return user
