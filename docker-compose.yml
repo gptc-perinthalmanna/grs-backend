@@ -1,0 +1,13 @@
+version: '3'
+services:
+  polimo-backend:
+    restart: always
+    env_file: .env
+    build: .
+    ports:
+      - "5005:5005"
+    networks:
+      - web_network
+networks:
+  web_network:
+    driver: bridge
