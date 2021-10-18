@@ -1,51 +1,69 @@
+import datetime
 from typing import Optional, List
-from pydantic import BaseModel, HttpUrl, validator
-
+from pydantic import BaseModel, HttpUrl, validator, EmailStr, UUID4
+from enum import Enum
+import re
 
 class Token(BaseModel):
     access_token: str
     token_type: str
 
 
-class Social(BaseModel):
-    # Social Media Accounts
-    instagram: str
-    facebook: str
-    twitter: str
-    youtube: str
-    telegram: str
-    whatsapp: str
+class Gender(str, Enum):
+    male = 'male'
+    female = 'female'
 
 
-class AccountDetails(BaseModel):
-    createdAt: Optional[str] = None
-    updatedAt: Optional[str] = None
+class Designation(str, Enum):
+    tradesman = 'tradesman'
+    tradeInstructor = 'tradeInstructor'
+    demonstrator = 'demonstrator'
+    workshopInstructor = 'workshopInstructor'
+    workshopSuperintendent = 'workshopSuperintendent'
+    lecturer = 'lecturer'
+    headOfDepartment = 'headOfDepartment'
+    principal = 'principal'
+    student = 'student'
+    officeStaff = 'officeStaff'
 
 
-class UserFields(BaseModel):
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    contact_number: Optional[int] = None
-    address: Optional[str] = None
-    state: Optional[str] = 'Kerala'
-    country: Optional[str] = 'In'
-    zip: Optional[int] = None
-    gender: Optional[str] = 'Male'
-    occupation: Optional[str] = None
-    avatar: Optional[HttpUrl] = None
-    designation: Optional[str] = None
-    about: Optional[str] = None
-    social: Optional[Social]
-    badges: Optional[List]
+class AccountType(str, Enum):
+    student = 'student'
+    staff = 'staff'
+    parent = 'parent'
+    other = 'other'
 
 
-class User(UserFields):
-    key: Optional[str]
+class User(BaseModel):
+    key: UUID4
     username: str
-    email: Optional[str] = None
+    email: EmailStr
     disabled: Optional[bool] = False
     roles: Optional[List] = ['User']
-    accounts: Optional[AccountDetails]
+    first_name: str
+    last_name: str
+    contact_number: int
+    type: AccountType
+    address: Optional[str] = None
+    state: Optional[str] = 'Kerala'
+    pin: Optional[int] = None
+    gender: Optional[Gender] = 'male'
+    avatar: Optional[HttpUrl] = None
+    designation: Optional[Designation] = None
+    createdAt: Optional[datetime.datetime] = None
+    updatedAt: Optional[datetime.datetime] = None
+
+    @validator('designation')
+    def check_user_is_staff(cls, v, values, **kwargs):
+        if values['type'] != 'staff':
+            raise ValueError('Cannot Select Designation if you are not Staff of the college.')
+        return v
+
+    @validator('contact_number')
+    def validate_mobile_number(cls, v):
+        pattern = re.compile('^[6-9]\d{9}$')
+        assert pattern.match(str(v)), 'Contact Number is Invalid'
+        return v
 
     @validator('username')
     def username_alphanumeric(cls, v):
@@ -61,8 +79,14 @@ class UserCreate(User):
     password: str
     repeat_password: Optional[str]
 
+    @validator('repeat_password')
+    def password_match(cls, v, values, **kwargs):
+        if 'password' in values and values['password'] == v:
+            return v
+        raise ValueError('Passwords doesnot match')
 
-class UserEdit(UserFields):
+
+class UserEdit(User):
     username: str
     password: str
 

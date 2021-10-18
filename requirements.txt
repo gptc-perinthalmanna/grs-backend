@@ -12,3 +12,4 @@ uvicorn
 aiofiles
 python-multipart
 deta
+requests

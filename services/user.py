@@ -8,12 +8,9 @@ from jose import jwt, JWTError
 from passlib.context import CryptContext
 from starlette import status
 
-from models.user import UserInDB, User, UserCreate, AccountDetails, UserEdit
+from models.user import UserInDB, User, UserCreate, UserEdit
 from config import settings
-
-package = "services.db." + settings.DB
-name = "userDB"
-userDB = getattr(__import__(package, fromlist=[name]), name)
+from services.db.deta import userDB
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -218,5 +215,6 @@ def populate_fields(user: UserCreate) -> UserCreate:
         hash_object = hashlib.md5(email.encode())
         md5_hash = hash_object.hexdigest()
         user.avatar = f'https://www.gravatar.com/avatar/{md5_hash}?s=400&d=robohash'
-    user.accounts = AccountDetails(createdAt=datetime.now().isoformat(), updatedAt=datetime.now().isoformat())
+    user.createdAt=datetime.now().isoformat()
+    user.updatedAt=datetime.now().isoformat()
     return user
