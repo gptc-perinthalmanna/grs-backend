@@ -27,7 +27,10 @@ jobs:
         
       - name: Install Requirements.
         run: pip install -r requirements.txt
-
+        
+      - name: Install Pytest.
+        run: pip install pytest
+        
       - name: Set Enviornament Vars
         run: | 
           env DETA_BASE_KEY="${{ secrets.DETA_BASE_KEY }}"
