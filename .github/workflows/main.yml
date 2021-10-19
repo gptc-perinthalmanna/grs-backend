@@ -31,11 +31,6 @@ jobs:
       - name: Install Pytest.
         run: pip install pytest
         
-      - name: Set Enviornament Vars
-        run: | 
-          env DETA_BASE_KEY="${{ secrets.DETA_BASE_KEY }}"
-          env SECRET_KEY="${{ secrets.SECRET_KEY }}"
-
       # Runs a single command using the runners shell
       - name: Test the code.
         run: pytest -s --color=yes
