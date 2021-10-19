@@ -24,13 +24,14 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      
-            # Runs a single command using the runners shell
-      - name: Install pytest.
-        run: pip install pytest
         
       - name: Install Requirements.
         run: pip install -r requirements.txt
+
+      - name: Set Enviornament Vars
+        run: | 
+          env DETA_BASE_KEY="${{ secrets.DETA_BASE_KEY }}"
+          env SECRET_KEY="${{ secrets.SECRET_KEY }}"
 
       # Runs a single command using the runners shell
       - name: Test the code.
