@@ -1,6 +1,5 @@
-import fastapi
-from fastapi import responses
-router = fastapi.APIRouter()
+from fastapi import responses, APIRouter
+router = APIRouter()
 
 
 @router.get('/', include_in_schema=False)
@@ -10,4 +9,4 @@ def index():
 
 @router.get('/favicon.ico', include_in_schema=False)
 def favicon():
-    return fastapi.responses.RedirectResponse(url='/static/icons/favicon.ico')
+    return responses.RedirectResponse(url='/static/icons/favicon.ico')

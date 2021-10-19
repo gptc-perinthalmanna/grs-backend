@@ -9,7 +9,6 @@ from models.user import User, UserInDB, UserSerialized
 
 deta = Deta(settings.DETA_BASE_KEY)  # configure your Deta project
 users_db = deta.Base('users')
-user_history_db = deta.Base('UserHistory')
 
 
 async def get_user_from_id(key: UUID4) -> Optional[UserInDB]:
