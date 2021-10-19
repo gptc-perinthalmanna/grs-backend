@@ -36,3 +36,7 @@ async def create_new_post_db(post: Post) -> Optional[PostInDB]:
 
 async def put_post_to_db(post: PostInDB) -> Optional[PostInDB]:
     return PostInDB(**(posts_db.put(PostSerialized(**post.dict()).dict())))
+
+
+async def delete_post_permanently_db(post_key):
+    return posts_db.delete(post_key)

@@ -48,3 +48,7 @@ async def update_password_to_db(hashed_password, userindb: User) -> UserInDB:
     v = userindb.dict()
     v['hashed_password'] = hashed_password
     return users_db.put(v, key=userindb.key)
+
+
+async def permanently_delete_user_from_db(user):
+    return users_db.delete(UserSerialized(**user.dict()).key)

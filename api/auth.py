@@ -3,6 +3,8 @@ from fastapi import Depends, HTTPException, APIRouter, BackgroundTasks
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette import status
 from models.user import User, Token, UserCreate, UserEdit, ChangePassword
+from services.db.deta.userDB import permanently_delete_user_from_db
+from services.notifications import notify_on_password_change, notify_on_new_user
 from services.user import authenticate_user, create_access_token, get_current_active_user, ACCESS_TOKEN_EXPIRE_MINUTES, \
     create_new_user, update_user_fields, check_password_and_username, send_email, generate_password_reset_token, \
     verify_password_reset_token, get_user, populate_fields, update_user_password
@@ -53,10 +55,7 @@ async def create_user(new_user: UserCreate):
             detail="The user with this username already exists in the system.",
         )
     user = await create_new_user(new_user)
-    # if config.EMAILS_ENABLED and user_in.email:
-    #     send_new_account_email(
-    #         email_to=user_in.email, username=user_in.username, password=user_in.password
-    #     )
+    await notify_on_new_user(user)
     return user
 
 
@@ -93,6 +92,7 @@ async def change_password(req: ChangePassword, current_user: User = Depends(get_
             detail="Entered password doesn't match"
         )
     if await update_user_password(req.new_password, current_user):
+        await notify_on_password_change(current_user)
         return {"message": "Password Successfully changed!"}
     else:
         raise HTTPException(
@@ -130,3 +130,17 @@ async def reset_password_link(reset_password_token: str, new_password: str, repe
         raise HTTPException(status_code=400, detail="Inactive user")
     # update password in db
     return reset_password_token
+
+
+# Test Routes
+@router.delete("/users/{username}/", include_in_schema=False)
+async def delete_user(username):
+    from test_main import user
+    if username == user['username']:
+        userd = await get_user(username)
+        if userd is None:
+            return "User didn't Exists"
+        await permanently_delete_user_from_db(userd)
+        return "success"
+    else:
+        return "Invalid Operation"

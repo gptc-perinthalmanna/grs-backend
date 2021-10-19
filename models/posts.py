@@ -32,12 +32,14 @@ class StatusChange(BaseModel):
 
 class PostResponse(BaseModel):
     id: int
+    author: UUID4
     content: str
     statusChange: StatusChange
     published: datetime
     modified: datetime
     deleted: bool = False
     visible: bool = True
+
 
     @validator('visible')
     def deleted_val(cls, v, values, **kwargs):
@@ -79,13 +81,14 @@ class PostInDB(Post):
 class PostResponseSerialized(PostResponse):
     published: Optional[Any]
     modified: Optional[Any]
+    author: Optional[Any]
 
-    @validator('published')
-    def serialize_published(cls, v):
-        return v.isoformat()
+    @validator('author')
+    def serialize_uuid(cls, v):
+        return v.hex
 
-    @validator('modified')
-    def serialize_modified(cls, v):
+    @validator('published', 'modified')
+    def serialize_date(cls, v):
         return v.isoformat()
 
 
@@ -96,19 +99,11 @@ class PostSerialized(Post):
     modified: Optional[Any]
     responses: Optional[List[PostResponseSerialized]]
 
-    @validator('key')
-    def serialize_key(cls, v):
+    @validator('key', 'author')
+    def serialize_uuid(cls, v):
         return v.hex
 
-    @validator('author')
-    def serialize_author(cls, v):
-        return v.hex
-
-    @validator('published')
-    def serialize_published(cls, v):
-        return v.isoformat()
-
-    @validator('modified')
-    def serialize_modified(cls, v):
+    @validator('published', 'modified')
+    def serialize_date(cls, v):
         return v.isoformat()
 

@@ -10,3 +10,8 @@ def index():
 @router.get('/favicon.ico', include_in_schema=False)
 def favicon():
     return responses.RedirectResponse(url='/static/icons/favicon.ico')
+
+
+@router.get('/test/', include_in_schema=False)
+def test():
+    return "Ok"

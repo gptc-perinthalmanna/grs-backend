@@ -98,19 +98,19 @@ class ChangePassword(BaseModel):
     repeat_password: str
 
 
-class UserSerialized(User):
+class UserSerialized(UserInDB):
     key: Optional[Any]
     createdAt: Optional[Any]
     updatedAt: Optional[Any]
+    hashed_password: Optional[str]
 
     @validator('key')
-    def serialize_key(cls, v):
+    def serialize_uuid(cls, v):
+        if type(v) == str:
+            return v
         return v.hex
 
-    @validator('createdAt')
-    def serialize_ca(cls, v):
+    @validator('createdAt', 'updatedAt')
+    def serialize_date(cls, v):
         return v.isoformat()
 
-    @validator('updatedAt')
-    def serialize_ua(cls, v):
-        return v.isoformat()
