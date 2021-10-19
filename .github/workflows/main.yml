@@ -28,6 +28,9 @@ jobs:
             # Runs a single command using the runners shell
       - name: Install pytest.
         run: pip install pytest
+        
+      - name: Install Requirements.
+        run: pip install -r requirements.txt
 
       # Runs a single command using the runners shell
       - name: Test the code.
