@@ -1,30 +1,21 @@
-# This is a basic workflow to help you get started with Actions
+name: Test and Deploy
 
-name: Run Tests
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+
 jobs:
-  # This workflow contains a single job called "build"
-  test:
-    # The type of runner that the job will run on
+  build:
     runs-on: ubuntu-latest
     env: 
       DETA_BASE_KEY: ${{ secrets.DETA_BASE_KEY }}
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
         
       - name: Install Requirements.
@@ -33,12 +24,16 @@ jobs:
       - name: Install Pytest.
         run: pip install pytest
         
-      # Runs a single command using the runners shell
       - name: Test the code.
         run: pytest -s --color=yes
+        
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2 #Be sure you check-out the repo first. Deta CLI needs access to the files
+      - uses: BogDAAAMN/deta-deploy-action@v1.0.0
+        with:
+          deta-access-token: ${{ secrets.DETA_ACCESS_TOKEN }} #Deta access token https://docs.deta.sh/docs/cli/auth
+          deta-name: 'grs-backend' #Deta Micro name https://docs.deta.sh/docs/cli/commands/#deta-clone
+          deta-project: 'GRS' #Deta project name https://docs.deta.sh/docs/cli/commands/#deta-clone
 
-#       # Runs a set of commands using the runners shell
-#       - name: Run a multi-line script
-#         run: |
-#           echo Add other actions to build,
-#           echo test, and deploy your project.
