@@ -1,6 +1,4 @@
-import json
 import os
-from pathlib import Path
 import secrets
 from typing import List, Optional, Union
 from functools import lru_cache
@@ -11,11 +9,9 @@ class Settings(BaseSettings):
     SECRET_KEY: str = secrets.token_urlsafe(32)
     # 60 minutes * 24 hours * 8 days = 8 days
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
-    SERVER_NAME: str = ""
+    SERVER_NAME: str = "GRS - GPTC Perinthalmanna"
     SERVER_HOST: AnyHttpUrl = "http://127.0.0.1"
-    # BACKEND_CORS_ORIGINS is a JSON-formatted list of origins
-    # e.g: '["http://localhost", "http://localhost:4200", "http://localhost:3000", \
-    # "http://localhost:8080", "http://local.dockertoolbox.tiangolo.com"]'
+
     BACKEND_CORS_ORIGINS: List[str] = ["*"]
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)
@@ -26,7 +22,7 @@ class Settings(BaseSettings):
             return v
         raise ValueError(v)
 
-    PROJECT_NAME: str = ""
+    PROJECT_NAME: str = "Grievience Redressal System"
     SENTRY_DSN: Optional[HttpUrl] = ""
 
     @validator("SENTRY_DSN", pre=True)
@@ -35,7 +31,6 @@ class Settings(BaseSettings):
             return None
         return v
 
-    DB: str = "cloudant"
     DETA_BASE_KEY: Optional[str]
 
     SMTP_TLS: bool = True
@@ -59,15 +54,7 @@ class Settings(BaseSettings):
 
 @lru_cache()
 def get_settings():
-    file = Path('settings.json').absolute()
-    if not file.exists():
-        print(f'WARNING: {file} file not found. Switching to Env Variables for config.')
-        return Settings(**os.environ)
-        # raise Exception('Key file is missing.')
-    with open('settings.json') as fin:
-        keys = json.load(fin)
-
-    return Settings(**keys)
+    return Settings(**os.environ)
 
 
 settings = get_settings()
