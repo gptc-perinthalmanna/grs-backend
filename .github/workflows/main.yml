@@ -1,0 +1,39 @@
+name: Test and Deploy
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  workflow_dispatch:
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env: 
+      DETA_BASE_KEY: ${{ secrets.DETA_BASE_KEY }}
+
+    steps:
+      - uses: actions/checkout@v2
+        
+      - name: Install Requirements.
+        run: pip install -r requirements.txt
+        
+      - name: Install Pytest.
+        run: pip install pytest
+        
+      - name: Test the code.
+        run: pytest -s --color=yes
+        
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2 #Be sure you check-out the repo first. Deta CLI needs access to the files
+      - uses: BogDAAAMN/deta-deploy-action@v1.0.0
+        with:
+          deta-access-token: ${{ secrets.DETA_ACCESS_TOKEN }} #Deta access token https://docs.deta.sh/docs/cli/auth
+          deta-name: 'grs-backend' #Deta Micro name https://docs.deta.sh/docs/cli/commands/#deta-clone
+          deta-project: 'GRS' #Deta project name https://docs.deta.sh/docs/cli/commands/#deta-clone
+
