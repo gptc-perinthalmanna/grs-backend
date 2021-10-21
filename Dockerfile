@@ -1,4 +1,4 @@
-FROM python:latest
+FROM python:3.10.0b4
 
 ENV FLASK_APP run.py
 ENV DB cloudant
