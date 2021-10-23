@@ -3,9 +3,9 @@ import os
 from uuid import UUID
 
 from fastapi.testclient import TestClient
-from _tests.tests import run_tests, test_admin_user, post, new_response
+from _tests.tests import run_tests, test_admin_user, post, new_response, new_post
 from main import app
-from models.posts import Post, NewResponse
+from models.posts import NewResponse, NewPost
 from services.db.deta.postsDB import delete_post_permanently_db
 from services.db.deta.userDB import permanently_delete_user_from_db
 from services.user import get_user
@@ -80,7 +80,7 @@ def test_remove_the_post():
 
 
 def test_create_new_post():
-    response = client.post("/posts/new/", data=Post(**post).json(), headers={"Authorization": f"Bearer {os.getenv('TOKEN')}"})
+    response = client.post("/posts/new/", data=NewPost(**new_post).json(), headers={"Authorization": f"Bearer {os.getenv('TOKEN')}"})
     assert response.status_code == 200
 
 

@@ -5,7 +5,7 @@ from api import auth, routes, posts
 from config import settings
 import uvicorn
 
-app = fastapi.FastAPI(title="GRS", description="Grievance Redress  system", version="0.1.0")
+app = fastapi.FastAPI(title="GRS", description="Grievance Redress system", version="0.1.0")
 
 
 def configure():
@@ -32,6 +32,6 @@ def configure_routing():
 
 if __name__ == '__main__':
     configure()
-    uvicorn.run("main:app", port=8000, host="127.0.0.1", reload=True)
+    uvicorn.run("main:app", port=8001, host="127.0.0.1", reload=True)
 else:
     configure()

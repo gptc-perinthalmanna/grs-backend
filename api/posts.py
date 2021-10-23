@@ -1,13 +1,15 @@
 import datetime
+import uuid
+import time
 from typing import List, Optional, Union
 
 from fastapi import Depends, HTTPException, APIRouter
 from pydantic import UUID4, BaseModel
 from starlette import status
 
-from models.posts import Post, PostInDB, PostResponse, NewResponse
+from models.posts import Post, PostInDB, PostResponse, NewResponse, NewPost, Status
 from models.user import User, AccountType
-from services.db.deta.postsDB import get_post_from_id, get_all_posts_from_db, create_new_post_db, put_post_to_db
+from services.db.deta.postsDB import get_my_posts_from_db, get_post_from_id, get_all_posts_from_db, create_new_post_db, put_post_to_db
 from services.notifications import notify_on_new_response, notify_on_delete_post, notify_on_delete_response
 from services.user import get_current_active_user
 
@@ -25,17 +27,6 @@ no_permission = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                               detail="You don't have permissions for this action!")
 
 
-@router.get('/posts/{post_id}/', response_model=PostInDB, tags=[tag])
-async def get_post(post_id: UUID4, current_user: User = Depends(get_current_active_user)):
-    post = await get_post_from_id(post_id)
-    if current_user.key != post.author and current_user.type not in permissions['post_view']:
-        raise no_permission
-    if not post:
-        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail="Post not Exists")
-    if post.deleted or not post.visible:
-        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail="Post is not accessible")
-    return post
-
 
 class FetchQuery(BaseModel):
     last_key: Optional[UUID4] = None
@@ -51,9 +42,36 @@ async def get_all_posts(key: Optional[FetchQuery] = None, current_user: User = D
     return await get_all_posts_from_db(last_key=key.last_key, query=key.query)
 
 
+@router.get('/posts/me/', response_model=List[PostInDB], tags=[tag])
+async def get_my_posts(key: Optional[UUID4] = None, current_user: User = Depends(get_current_active_user)):
+    return await get_my_posts_from_db(user_id=current_user.key, last_key=key)
+
+
+@router.get('/posts/{post_id}/', response_model=PostInDB, tags=[tag])
+async def get_post(post_id: UUID4, current_user: User = Depends(get_current_active_user)):
+    post = await get_post_from_id(post_id)
+    if current_user.key != post.author and current_user.type not in permissions['post_view']:
+        raise no_permission
+    if not post:
+        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail="Post not Exists")
+    if post.deleted or not post.visible:
+        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail="Post is not accessible")
+    time.sleep(4)
+    return post
+
+
 @router.post('/posts/new/', response_model=PostInDB, tags=[tag])
-async def create_post(post: Post, current_user: User = Depends(get_current_active_user)):
-    new_post = await create_new_post_db(post)
+async def create_post(post: NewPost, current_user: User = Depends(get_current_active_user)):
+    _post = Post(
+        key= uuid.uuid4(),
+        status=Status.open,
+        author = current_user.key,
+        authorName = current_user.username,
+        published = datetime.datetime.now(),
+        modified = datetime.datetime.now(),
+        **post.dict()
+    )
+    new_post = await create_new_post_db(_post)
     await notify_on_delete_post(new_post)
     return new_post
 

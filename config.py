@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     # 60 minutes * 24 hours * 8 days = 8 days
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
     SERVER_NAME: str = "GRS - GPTC Perinthalmanna"
-    SERVER_HOST: AnyHttpUrl = "http://127.0.0.1"
+    SERVER_HOST: AnyHttpUrl = "https://newgrs.deta.dev"
 
     BACKEND_CORS_ORIGINS: List[str] = ["*"]
 
@@ -31,7 +31,7 @@ class Settings(BaseSettings):
             return None
         return v
 
-    DETA_BASE_KEY: Optional[str]
+    DETA_BASE_KEY: Optional[str] 
 
     SMTP_TLS: bool = True
     SMTP_PORT: Optional[int] = None

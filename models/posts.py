@@ -54,6 +54,12 @@ class NewResponse(BaseModel):
     status: Status
 
 
+class NewPost(BaseModel):
+    subject: str
+    content: str
+    priority: Priority
+
+
 class Post(BaseModel):
     key: UUID4
     subject: str

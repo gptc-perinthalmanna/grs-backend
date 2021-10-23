@@ -1,9 +1,10 @@
 from datetime import timedelta
 from fastapi import Depends, HTTPException, APIRouter, BackgroundTasks
 from fastapi.security import OAuth2PasswordRequestForm
+from pydantic.types import UUID4
 from starlette import status
-from models.user import User, Token, UserCreate, UserEdit, ChangePassword
-from services.db.deta.userDB import permanently_delete_user_from_db
+from models.user import BasicUser, User, Token, UserCreate, UserEdit, ChangePassword
+from services.db.deta.userDB import get_user_from_id, permanently_delete_user_from_db
 from services.notifications import notify_on_password_change, notify_on_new_user
 from services.user import authenticate_user, create_access_token, get_current_active_user, ACCESS_TOKEN_EXPIRE_MINUTES, \
     create_new_user, update_user_fields, check_password_and_username, send_email, generate_password_reset_token, \
@@ -79,7 +80,7 @@ async def edit_user(updateuser: UserEdit, current_user: User = Depends(get_curre
         )
 
 
-@router.put("/users/me/change-password", tags=['User'], status_code=status.HTTP_202_ACCEPTED)
+@router.put("/users/me/change-password/", tags=['User'], status_code=status.HTTP_202_ACCEPTED)
 async def change_password(req: ChangePassword, current_user: User = Depends(get_current_active_user)):
     if not await check_password_and_username(req, current_user):
         raise HTTPException(
@@ -130,6 +131,14 @@ async def reset_password_link(reset_password_token: str, new_password: str, repe
         raise HTTPException(status_code=400, detail="Inactive user")
     # update password in db
     return reset_password_token
+
+
+@router.get("/users/user/{user_id}/", response_model=BasicUser, tags=["User"])
+async def get_user_details(user_id: UUID4, current_user: User = Depends(get_current_active_user)):
+    if current_user.disabled:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are blocked from the system")
+    user = await get_user_from_id(user_id)
+    return BasicUser(**user.dict())
 
 
 # Test Routes

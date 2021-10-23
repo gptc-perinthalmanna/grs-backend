@@ -34,6 +34,15 @@ class AccountType(str, Enum):
     parent = 'parent'
     other = 'other'
 
+class BasicUser(BaseModel):
+    key: UUID4
+    username: str
+    first_name: str
+    last_name: str
+    avatar: Optional[HttpUrl] = None
+    designation: Optional[Designation] = None
+    type: AccountType
+    gender: Optional[Gender]
 
 class User(BaseModel):
     key: UUID4

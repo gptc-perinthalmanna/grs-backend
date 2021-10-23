@@ -53,6 +53,12 @@ test_admin_user = {
     "repeat_password": "Sup3RUse3R!"
 }
 
+new_post = {
+    'subject': 'Test Subject',
+    'content': 'Sample Content',
+    'priority': 'high',
+}
+
 post = {
     'key': '529e35c3-1fc1-456b-9254-e37d27a7dfbf',
     'subject': 'Test Subject',

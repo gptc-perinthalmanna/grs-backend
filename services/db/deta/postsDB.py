@@ -22,12 +22,31 @@ async def get_post_from_id(key: UUID4) -> Optional[PostInDB]:
 
 async def get_all_posts_from_db(last_key: Optional[UUID4] = None, query: Union[dict, list] = None) -> Optional[
     List[PostInDB]]:
-    posts = posts_db.fetch(limit=25, last=last_key, query=query)
+    lk = last_key.hex if last_key else None
+    posts = posts_db.fetch(limit=25, last=lk, query=query)
     response = []
     for post in posts.items:
         if not post['deleted']:
             response.append(PostInDB(**post))
     return response
+
+
+async def get_my_posts_from_db(user_id: UUID4, last_key: Optional[UUID4] = None) -> Optional[
+    List[PostInDB]]:
+    lk = last_key.hex if last_key else None
+    posts = posts_db.fetch(limit=25, last=lk, query={"author": user_id.hex})
+    response = []
+    for post in posts.items:
+        if not post['deleted']:
+            response.append(PostInDB(**post))
+    while posts.last and len(response) < 10:
+        posts = posts_db.fetch(limit=15, last=posts.last, query={"author": user_id.hex})
+        for post in posts.items:
+            if not post['deleted']:
+                response.append(PostInDB(**post))
+
+    return response
+
 
 
 async def create_new_post_db(post: Post) -> Optional[PostInDB]:

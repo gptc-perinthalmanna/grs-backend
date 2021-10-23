@@ -2,8 +2,8 @@ FROM python:latest
 
 ENV FLASK_APP run.py
 ENV DB cloudant
-ENV SERVER_NAME POLMO
-ENV PROJECT_NAME POLMO
+ENV SERVER_NAME GRS
+ENV PROJECT_NAME GRS
 
 COPY main.py requirements.txt config.py ./
 COPY api api
