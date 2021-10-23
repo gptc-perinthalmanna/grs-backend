@@ -84,9 +84,9 @@ def test_create_new_post():
     assert response.status_code == 200
 
 
-def test_get_single_post():
-    response = client.get(f"/posts/{post['key']}/", headers={"Authorization": f"Bearer {os.getenv('TOKEN')}"})
-    assert response.status_code == 200
+# def test_get_single_post():
+#     response = client.get(f"/posts/{post['key']}/", headers={"Authorization": f"Bearer {os.getenv('TOKEN')}"})
+#     assert response.status_code == 200
 
 
 def test_get_all_post():
@@ -94,19 +94,19 @@ def test_get_all_post():
     assert response.status_code == 200
 
 
-def test_delete_single_post():
-    response = client.delete(f"/posts/{post['key']}/", headers={"Authorization": f"Bearer {os.getenv('TOKEN')}"})
-    assert response.status_code == 200
+# def test_delete_single_post():
+#     response = client.delete(f"/posts/{post['key']}/", headers={"Authorization": f"Bearer {os.getenv('TOKEN')}"})
+#     assert response.status_code == 200
 
 
-def test_add_new_response():
-    response = client.post(f"/posts/response/new/", data=NewResponse(**new_response).json(), headers={"Authorization": f"Bearer {os.getenv('TOKEN')}"})
-    assert response.status_code == 200
+# def test_add_new_response():
+#     response = client.post(f"/posts/response/new/", data=NewResponse(**new_response).json(), headers={"Authorization": f"Bearer {os.getenv('TOKEN')}"})
+#     assert response.status_code == 200
 
 
-def test_delete_response():
-    response = client.delete(f"/posts/{post['key']}/response/0/", headers={"Authorization": f"Bearer {os.getenv('TOKEN')}"})
-    assert response.status_code == 200
+# def test_delete_response():
+#     response = client.delete(f"/posts/{post['key']}/response/0/", headers={"Authorization": f"Bearer {os.getenv('TOKEN')}"})
+#     assert response.status_code == 200
 
 
 def test_clean_the_post():
