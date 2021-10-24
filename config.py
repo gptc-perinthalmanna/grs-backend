@@ -1,12 +1,12 @@
 import os
-import secrets
+#import secrets
 from typing import List, Optional, Union
 from functools import lru_cache
 from pydantic import AnyHttpUrl, BaseSettings, HttpUrl, validator
 
 
 class Settings(BaseSettings):
-    SECRET_KEY: str = secrets.token_urlsafe(32)
+    SECRET_KEY: str = "Sup3rSec73tK3y" #secrets.token_urlsafe(32)
     # 60 minutes * 24 hours * 8 days = 8 days
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
     SERVER_NAME: str = "GRS - GPTC Perinthalmanna"

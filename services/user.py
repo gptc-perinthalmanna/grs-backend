@@ -83,8 +83,8 @@ async def get_current_active_user(current_user: User = Depends(get_current_user)
 
 async def create_new_user(user: UserCreate) -> UserInDB:
     hashed_password = get_password_hash(user.password)
+    user.key = uuid.uuid4()
     user_in = UserInDB(hashed_password=hashed_password, **user.dict())
-    user_in.key = uuid.uuid4()
     created_user = await userDB.create_new_user_to_db(user_in)
     return created_user
 

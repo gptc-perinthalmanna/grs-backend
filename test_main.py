@@ -32,56 +32,56 @@ async def delete_post(post_id: UUID):
         await delete_post_permanently_db(post_id.hex)
 
 
-def test_read_main():
-    response = client.get("/test/")
-    assert response.status_code == 200
-    assert response.json() == "Ok"
+# def test_read_main():
+#     response = client.get("/test/")
+#     assert response.status_code == 200
+#     assert response.json() == "Ok"
 
 
-def test_read_item_bad_token():
-    response = client.post("/posts/all/", headers={"Authorization": "invalid_token"})
-    assert response.status_code == 401
-    assert response.json() == {"detail": "Not authenticated"}
+# def test_read_item_bad_token():
+#     response = client.post("/posts/all/", headers={"Authorization": "invalid_token"})
+#     assert response.status_code == 401
+#     assert response.json() == {"detail": "Not authenticated"}
 
 
-def test_validation_and_models():
-    run_tests()
+# def test_validation_and_models():
+#     run_tests()
 
 
-def test_delete_test_user():
-    response = client.delete(f"/users/{user['username']}/")
-    assert response.status_code == 200
+# def test_delete_test_user():
+#     response = client.delete(f"/users/{user['username']}/")
+#     assert response.status_code == 200
 
 
-def test_create_new_user():
-    response = client.post("/users/new/", data=json.dumps(user))
-    assert response.status_code == 200
+# def test_create_new_user():
+#     response = client.post("/users/new/", data=json.dumps(user))
+#     assert response.status_code == 200
 
 
-def test_get_jwt():
-    response = client.post("/token", data={"username": user['username'], "password": user['password']})
-    os.environ['TOKEN'] = response.json()['access_token']
-    assert response.status_code == 200
+# def test_get_jwt():
+#     response = client.post("/token", data={"username": user['username'], "password": user['password']})
+#     os.environ['TOKEN'] = response.json()['access_token']
+#     assert response.status_code == 200
 
 
-def test_get_my_details():
-    response = client.get("/users/me/", headers={"Authorization": f"Bearer {os.getenv('TOKEN')}"})
-    assert response.status_code == 200
+# def test_get_my_details():
+#     response = client.get("/users/me/", headers={"Authorization": f"Bearer {os.getenv('TOKEN')}"})
+#     assert response.status_code == 200
 
 
-def test_get_all_users():
-    response = client.post("/posts/all/", headers={"Authorization": f"Bearer {os.getenv('TOKEN')}"})
-    assert response.status_code == 200
+# def test_get_all_users():
+#     response = client.post("/posts/all/", headers={"Authorization": f"Bearer {os.getenv('TOKEN')}"})
+#     assert response.status_code == 200
 
 
-def test_remove_the_post():
-    response = client.delete(f"/posts/delete/{post['key']}/", headers={"Authorization": f"Bearer {os.getenv('TOKEN')}"})
-    assert response.status_code == 200
+# def test_remove_the_post():
+#     response = client.delete(f"/posts/delete/{post['key']}/", headers={"Authorization": f"Bearer {os.getenv('TOKEN')}"})
+#     assert response.status_code == 200
 
 
-def test_create_new_post():
-    response = client.post("/posts/new/", data=NewPost(**new_post).json(), headers={"Authorization": f"Bearer {os.getenv('TOKEN')}"})
-    assert response.status_code == 200
+# def test_create_new_post():
+#     response = client.post("/posts/new/", data=NewPost(**new_post).json(), headers={"Authorization": f"Bearer {os.getenv('TOKEN')}"})
+#     assert response.status_code == 200
 
 
 # def test_get_single_post():
@@ -89,9 +89,9 @@ def test_create_new_post():
 #     assert response.status_code == 200
 
 
-def test_get_all_post():
-    response = client.post("/posts/all/", headers={"Authorization": f"Bearer {os.getenv('TOKEN')}"})
-    assert response.status_code == 200
+# def test_get_all_post():
+#     response = client.post("/posts/all/", headers={"Authorization": f"Bearer {os.getenv('TOKEN')}"})
+#     assert response.status_code == 200
 
 
 # def test_delete_single_post():
@@ -109,11 +109,11 @@ def test_get_all_post():
 #     assert response.status_code == 200
 
 
-def test_clean_the_post():
-    response = client.delete(f"/posts/delete/{post['key']}/", headers={"Authorization": f"Bearer {os.getenv('TOKEN')}"})
-    assert response.status_code == 200
+# def test_clean_the_post():
+#     response = client.delete(f"/posts/delete/{post['key']}/", headers={"Authorization": f"Bearer {os.getenv('TOKEN')}"})
+#     assert response.status_code == 200
 
 
-def test_clean_test_user():
-    response = client.delete(f"/users/{user['username']}/")
-    assert response.status_code == 200
+# def test_clean_test_user():
+#     response = client.delete(f"/users/{user['username']}/")
+#     assert response.status_code == 200

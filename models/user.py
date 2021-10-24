@@ -65,7 +65,8 @@ class User(BaseModel):
     @validator('designation')
     def check_user_is_staff(cls, v, values, **kwargs):
         if values['type'] != 'staff':
-            raise ValueError('Cannot Select Designation if you are not Staff of the college.')
+            if v is not None:
+                raise ValueError('Cannot Select Designation if you are not Staff of the college.')
         return v
 
     @validator('contact_number')
@@ -85,6 +86,7 @@ class UserInDB(User):
 
 
 class UserCreate(User):
+    key: Optional[UUID4]
     password: str
     repeat_password: Optional[str]
 

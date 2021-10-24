@@ -28,7 +28,7 @@ async def get_all_posts_from_db(last_key: Optional[UUID4] = None, query: Union[d
     for post in posts.items:
         if not post['deleted']:
             response.append(PostInDB(**post))
-    return response
+    return response, posts.last, posts.count
 
 
 async def get_my_posts_from_db(user_id: UUID4, last_key: Optional[UUID4] = None) -> Optional[
@@ -45,7 +45,7 @@ async def get_my_posts_from_db(user_id: UUID4, last_key: Optional[UUID4] = None)
             if not post['deleted']:
                 response.append(PostInDB(**post))
 
-    return response
+    return response, posts.last, posts.count
 
 
 

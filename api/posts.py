@@ -1,6 +1,5 @@
 import datetime
 import uuid
-import time
 from typing import List, Optional, Union
 
 from fastapi import Depends, HTTPException, APIRouter
@@ -27,24 +26,33 @@ no_permission = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                               detail="You don't have permissions for this action!")
 
 
-
 class FetchQuery(BaseModel):
     last_key: Optional[UUID4] = None
     query: Union[dict, list] = None
 
 
-@router.post('/posts/all/', response_model=List[PostInDB], tags=[tag])
+class PostListWithKey(BaseModel):
+    posts: List[PostInDB]
+    last_key: Optional[UUID4]
+    count: int
+
+
+@router.post('/posts/all/', response_model=PostListWithKey, tags=[tag])
 async def get_all_posts(key: Optional[FetchQuery] = None, current_user: User = Depends(get_current_active_user)):
     if current_user.type not in permissions['post_view']:
         raise no_permission
     if not key:
         return await get_all_posts_from_db()
-    return await get_all_posts_from_db(last_key=key.last_key, query=key.query)
+    posts, last_key, count = await get_all_posts_from_db(last_key=key.last_key, query=key.query)
+    return PostListWithKey(posts=posts, last_key=last_key, count=count)
 
 
-@router.get('/posts/me/', response_model=List[PostInDB], tags=[tag])
+
+@router.get('/posts/me/', response_model=PostListWithKey, tags=[tag])
 async def get_my_posts(key: Optional[UUID4] = None, current_user: User = Depends(get_current_active_user)):
-    return await get_my_posts_from_db(user_id=current_user.key, last_key=key)
+    print(key)
+    posts, last, count = await get_my_posts_from_db(user_id=current_user.key, last_key=key)
+    return PostListWithKey(posts=posts, last_key=last, count=count)
 
 
 @router.get('/posts/{post_id}/', response_model=PostInDB, tags=[tag])
@@ -53,22 +61,23 @@ async def get_post(post_id: UUID4, current_user: User = Depends(get_current_acti
     if current_user.key != post.author and current_user.type not in permissions['post_view']:
         raise no_permission
     if not post:
-        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail="Post not Exists")
+        raise HTTPException(
+            status_code=status.HTTP_204_NO_CONTENT, detail="Post not Exists")
     if post.deleted or not post.visible:
-        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail="Post is not accessible")
-    time.sleep(4)
+        raise HTTPException(
+            status_code=status.HTTP_204_NO_CONTENT, detail="Post is not accessible")
     return post
 
 
 @router.post('/posts/new/', response_model=PostInDB, tags=[tag])
 async def create_post(post: NewPost, current_user: User = Depends(get_current_active_user)):
     _post = Post(
-        key= uuid.uuid4(),
+        key=uuid.uuid4(),
         status=Status.open,
-        author = current_user.key,
-        authorName = current_user.username,
-        published = datetime.datetime.now(),
-        modified = datetime.datetime.now(),
+        author=current_user.key,
+        authorName=current_user.username,
+        published=datetime.datetime.now(),
+        modified=datetime.datetime.now(),
         **post.dict()
     )
     new_post = await create_new_post_db(_post)
@@ -93,7 +102,8 @@ async def delete_post(key: UUID4, current_user: User = Depends(get_current_activ
 async def new_response_to_post(response: NewResponse, current_user: User = Depends(get_current_active_user)):
     post = await get_post_from_id(response.post_key)
     if not post:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found!")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Post not found!")
     if post.author != current_user.key and current_user.type not in permissions['post_respond']:
         raise no_permission
     response_to_save = PostResponse(
@@ -124,7 +134,8 @@ async def delete_response_of_post(key: UUID4, res_id: int, current_user: User = 
     post = await get_post_from_id(key)
 
     if post.responses is None or post.responses[res_id] is None:
-        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail='Response not found.')
+        raise HTTPException(
+            status_code=status.HTTP_406_NOT_ACCEPTABLE, detail='Response not found.')
 
     if current_user.type not in permissions['response_delete'] and post.responses[res_id].author != current_user.key:
         raise no_permission
@@ -138,4 +149,3 @@ async def delete_response_of_post(key: UUID4, res_id: int, current_user: User = 
     post = await put_post_to_db(post)
     await notify_on_delete_response(post, res_id)
     return post
-
