@@ -32,3 +32,6 @@ termcolor
 typing-extensions
 urllib3
 uvicorn~=0.15.0
+draftjs_exporter
+pyTelegramBotAPI
+markdownify

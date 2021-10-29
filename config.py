@@ -31,7 +31,7 @@ class Settings(BaseSettings):
             return None
         return v
 
-    DETA_BASE_KEY: Optional[str] 
+    DETA_BASE_KEY: Optional[str]
 
     SMTP_TLS: bool = True
     SMTP_PORT: Optional[int] = None

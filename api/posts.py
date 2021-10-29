@@ -9,7 +9,7 @@ from starlette import status
 from models.posts import Post, PostInDB, PostResponse, NewResponse, NewPost, Status
 from models.user import User, AccountType
 from services.db.deta.postsDB import get_my_posts_from_db, get_post_from_id, get_all_posts_from_db, create_new_post_db, put_post_to_db
-from services.notifications import notify_on_new_response, notify_on_delete_post, notify_on_delete_response
+from services.notifications import notify_on_new_post, notify_on_new_response, notify_on_delete_post, notify_on_delete_response
 from services.user import get_current_active_user
 
 router = APIRouter()
@@ -81,7 +81,7 @@ async def create_post(post: NewPost, current_user: User = Depends(get_current_ac
         **post.dict()
     )
     new_post = await create_new_post_db(_post)
-    await notify_on_delete_post(new_post)
+    await notify_on_new_post(new_post)
     return new_post
 
 

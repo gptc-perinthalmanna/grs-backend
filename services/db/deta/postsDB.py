@@ -6,7 +6,6 @@ from pydantic import UUID4
 from config import settings
 from models.posts import Post, PostSerialized, PostInDB
 
-from models.user import User, UserInDB, UserSerialized
 
 deta = Deta(settings.DETA_BASE_KEY)  # configure your Deta project
 posts_db = deta.Base('posts')
