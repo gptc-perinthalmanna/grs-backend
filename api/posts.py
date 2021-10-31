@@ -80,6 +80,7 @@ async def delete_post(key: UUID4, current_user: User = Depends(get_current_activ
     if post.author != current_user.key and current_user.type not in permissions['post_delete']: raise no_permission
     post.deleted = True
     post.visible = False
+    post.status = Status.deleted
     post.modified = datetime.datetime.now()
     await put_post_to_db(post)
     await notify_on_delete_post(post)
@@ -93,7 +94,11 @@ async def new_response_to_post(response: NewResponse,request:Request, current_us
     if not post: raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found!")
     if post.author != current_user.key and current_user.type not in permissions['post_respond']: raise no_permission
 
-    user_id = response.user_id if current_user.type in admin_access_permission else current_user.key
+    if response.user_id:
+        user_id = response.user_id if current_user.type in admin_access_permission else current_user.key
+    else:
+        user_id = current_user.key
+
     response_to_save = PostResponse(
         id=len(post.responses) if post.responses else 0, author=user_id, content=response.content, modified=datetime.datetime.now(), published=datetime.datetime.now(),
         statusChange={ 'prev': post.status, 'to': response.status }

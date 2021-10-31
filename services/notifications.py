@@ -42,12 +42,15 @@ def generate_post_message_for_tg(post: PostInDB)->str:
 async def notify_on_new_post(post: PostInDB):
     # Send Telegram Notification
     notification = generate_post_message_for_tg(post)
-    chats = get_chat_ids()
-    post.telegram = [] if not post.telegram else post.telegram
-    for chat_id in chats:
-        message = await send_telegram_message(chat_id, notification)
-        if message: post.telegram.append({"message_id": message.message_id, "chat_id": message.chat.id})
-    await update_post_db(post)
+    try:
+        chats = get_chat_ids()
+        post.telegram = [] if not post.telegram else post.telegram
+        for chat_id in chats:
+            message = await send_telegram_message(chat_id, notification)
+            if message: post.telegram.append({"message_id": message.message_id, "chat_id": message.chat.id})
+        await update_post_db(post)
+    except Exception as e:
+        print(e)
 
     # Send Email Notification
     return True
@@ -58,7 +61,8 @@ async def notify_user(user: User) -> bool: pass
 
 async def notify_on_new_response(post: PostInDB, response_id: int):
     notification = generate_post_message_for_tg(post)
-    for chat in post.telegram: bot.edit_message_text(chat_id=chat.chat_id, message_id=chat.message_id, text=notification)
+    if notification and post.telegram:
+        for chat in post.telegram: bot.edit_message_text(chat_id=chat.chat_id, message_id=chat.message_id, text=notification)
     return True
 
 

@@ -1,4 +1,4 @@
-from typing import Optional, List, Union
+from typing import Optional, List, Tuple, Union
 
 from deta import Deta
 from pydantic import UUID4
@@ -19,14 +19,16 @@ async def get_post_from_id(key: UUID4) -> Optional[PostInDB]:
         return None
 
 
-async def get_all_posts_from_db(last_key: Optional[UUID4] = None, query: Union[dict, list] = None) -> Optional[
-    List[PostInDB]]:
-    lk = last_key.hex if last_key else None
+async def get_all_posts_from_db(last_key: Optional[UUID4] = None, query: Union[dict, list] = None, skip_deleted: bool = True) -> Tuple[Optional[List[PostInDB]], Optional[UUID4], Optional[int]]: 
+    lk = last_key if last_key else None
+    if type(lk) == UUID4:
+        lk = lk.hex
     posts = posts_db.fetch(limit=25, last=lk, query=query)
     response = []
     for post in posts.items:
-        if not post['deleted']:
-            response.append(PostInDB(**post))
+        if skip_deleted and post['deleted']:
+            continue
+        response.append(PostInDB(**post))
     return response, posts.last, posts.count
 
 

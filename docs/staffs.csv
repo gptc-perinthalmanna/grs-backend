@@ -1,0 +1,4 @@
+username,email,first_name,last_name,designation,department,gender,contact_number,password
+jithina,jithina@gmail.com,Jithina,Rajeev,officeStaff,officeStaff,female,9749959764,string
+abhina,abhina@gmail.com,Abhina,K,officeStaff,officeStaff,female,9462659546,string
+aswathi,aswathiajith@gmail.com,Aswathi,Ajith,tradesman,Electronics,female,9545654521,string
