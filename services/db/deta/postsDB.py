@@ -46,7 +46,8 @@ async def get_my_posts_from_db(user_id: UUID4, last_key: Optional[UUID4] = None)
 
     return response, posts.last, posts.count
 
-
+async def update_post_db(post: PostInDB) -> Optional[PostInDB]:
+    return PostInDB(**(posts_db.put(PostSerialized(**post.dict()).dict())))
 
 async def create_new_post_db(post: Post) -> Optional[PostInDB]:
     return PostInDB(**(posts_db.insert(PostSerialized(**post.dict()).dict())))

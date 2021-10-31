@@ -31,6 +31,8 @@ class Designation(str, Enum):
 class AccountType(str, Enum):
     student = 'student'
     staff = 'staff'
+    admin = 'admin'
+    grievance_cell_memeber = 'grievance_cell_memeber'
     parent = 'parent'
     other = 'other'
 
@@ -58,6 +60,7 @@ class User(BaseModel):
     pin: Optional[int] = None
     gender: Optional[Gender] = 'male'
     avatar: Optional[HttpUrl] = None
+    year_of_passout: Optional[int] = None
     designation: Optional[Designation] = None
     createdAt: Optional[datetime.datetime] = None
     updatedAt: Optional[datetime.datetime] = None
@@ -96,6 +99,17 @@ class UserCreate(User):
             return v
         raise ValueError('Passwords doesnot match')
 
+
+class CustomUserCreate(BaseModel):
+    id: int
+    account_type: AccountType
+    password: str
+    repeat_password: Optional[str]
+    @validator('repeat_password')
+    def password_match(cls, v, values, **kwargs):
+        if 'password' in values and values['password'] == v:
+            return v
+        raise ValueError('Passwords doesnot match')
 
 class UserEdit(User):
     username: str

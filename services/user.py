@@ -219,3 +219,10 @@ def populate_fields(user: UserCreate) -> UserCreate:
     user.createdAt = datetime.now().isoformat()
     user.updatedAt = datetime.now().isoformat()
     return user
+
+
+def get_user_details_from_student_id(**kwargs):
+    pass
+
+def get_user_details_from_pen_number(**kwargs):
+    pass

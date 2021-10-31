@@ -3,7 +3,7 @@ import os
 from typing import List, Optional, Union
 from functools import lru_cache
 from pydantic import AnyHttpUrl, BaseSettings, HttpUrl, validator
-
+from decouple import config
 
 class Settings(BaseSettings):
     SECRET_KEY: str = "Sup3rSec73tK3y" #secrets.token_urlsafe(32)
@@ -31,8 +31,8 @@ class Settings(BaseSettings):
             return None
         return v
 
-    DETA_BASE_KEY: Optional[str]
-
+    DETA_BASE_KEY: Optional[str] = config("DETA_BASE_KEY", default=None)
+    TELEGRAM_BOT_TOKEN: Optional[str] = config("TELEGRAM_BOT_TOKEN", default=None)
     SMTP_TLS: bool = True
     SMTP_PORT: Optional[int] = None
     SMTP_HOST: Optional[str] = None

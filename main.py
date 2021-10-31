@@ -1,7 +1,7 @@
 import fastapi
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.staticfiles import StaticFiles
-from api import auth, routes, posts
+from api import auth, routes, posts, admin
 from config import settings
 import uvicorn
 
@@ -28,6 +28,7 @@ def configure_routing():
     app.include_router(auth.router)
     app.include_router(routes.router)
     app.include_router(posts.router)
+    app.include_router(admin.router)
 
 
 if __name__ == '__main__':

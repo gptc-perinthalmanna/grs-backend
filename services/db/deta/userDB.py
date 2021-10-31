@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 from deta import Deta
 from pydantic import UUID4
@@ -52,3 +52,11 @@ async def update_password_to_db(hashed_password, userindb: User) -> UserInDB:
 
 async def permanently_delete_user_from_db(user):
     return users_db.delete(UserSerialized(**user.dict()).key)
+
+
+async def get_all_users_from_db() -> Optional[List[UserInDB]]:
+    users = users_db.fetch()
+    if users.count > 0:
+        return [UserInDB(**user) for user in users.items]
+    else:
+        return []

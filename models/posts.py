@@ -1,4 +1,4 @@
-from typing import Optional, List, Any
+from typing import Dict, Optional, List, Any
 from pydantic import BaseModel, UUID4, validator
 from enum import Enum
 from datetime import datetime
@@ -52,6 +52,7 @@ class NewResponse(BaseModel):
     post_key: UUID4
     content: str
     status: Status
+    user_id: Optional[UUID4]
 
 
 class NewPost(BaseModel):
@@ -79,8 +80,12 @@ class Post(BaseModel):
             raise ValueError('If value is deleted then visibility cannot be true')
         return v
 
+class Telegram(BaseModel):
+    chat_id: int
+    message_id: int
 
 class PostInDB(Post):
+    telegram: Optional[List[Telegram]] = None
     responses: Optional[List[PostResponse]]
 
 
@@ -103,6 +108,7 @@ class PostSerialized(Post):
     author: Optional[Any]
     published: Optional[Any]
     modified: Optional[Any]
+    telegram_message_id: Optional[int] = None
     responses: Optional[List[PostResponseSerialized]]
 
     @validator('key', 'author')
