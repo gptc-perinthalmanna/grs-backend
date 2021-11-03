@@ -79,8 +79,8 @@ async def edit_user(updateuser: UserEdit, current_user: User = Depends(get_curre
     """
        Edit user profile.
     """
-    if not await check_password_and_username(updateuser, current_user):
-        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE,detail="Incorrect username or password")
+    if updateuser.username != current_user.username:
+        raise HTTPException(status_code=400,detail="Username cannot be changed.",)
     user = await update_user_fields(updateuser, current_user)
     if user:
         return user
