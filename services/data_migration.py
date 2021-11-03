@@ -21,6 +21,7 @@ class User(pydantic.BaseModel):
     updatedAt: Optional[str] = None
     password: str = 'password@123'
     repeat_password: str = 'password@123'
+    force_password_change: bool = True
 
 class Student(User):
     register_number: int

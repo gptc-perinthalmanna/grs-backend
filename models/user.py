@@ -64,6 +64,7 @@ class User(BaseModel):
     designation: Optional[Designation] = None
     createdAt: Optional[datetime.datetime] = None
     updatedAt: Optional[datetime.datetime] = None
+    force_password_change: Optional[bool] = False
 
     @validator('designation')
     def check_user_is_staff(cls, v, values, **kwargs):
