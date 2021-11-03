@@ -36,6 +36,7 @@ class AccountType(str, Enum):
     parent = 'parent'
     other = 'other'
 
+
 class BasicUser(BaseModel):
     key: UUID4
     username: str
@@ -45,6 +46,7 @@ class BasicUser(BaseModel):
     designation: Optional[Designation] = None
     type: AccountType
     gender: Optional[Gender]
+
 
 class User(BaseModel):
     key: UUID4
@@ -111,6 +113,7 @@ class CustomUserCreate(BaseModel):
         if 'password' in values and values['password'] == v:
             return v
         raise ValueError('Passwords doesnot match')
+
 
 class UserEdit(User):
     username: str

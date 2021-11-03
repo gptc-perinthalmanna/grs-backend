@@ -80,9 +80,11 @@ class Post(BaseModel):
             raise ValueError('If value is deleted then visibility cannot be true')
         return v
 
+
 class Telegram(BaseModel):
     chat_id: int
     message_id: int
+
 
 class PostInDB(Post):
     telegram: Optional[List[Telegram]] = None
@@ -118,4 +120,3 @@ class PostSerialized(Post):
     @validator('published', 'modified')
     def serialize_date(cls, v):
         return v.isoformat()
-

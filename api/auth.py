@@ -74,6 +74,7 @@ async def register_user_from_server_data(user_create: CustomUserCreate, account_
     await notify_on_new_user(user)
     return user
 
+
 @router.put("/users/me/edit/", response_model=User, status_code=status.HTTP_202_ACCEPTED, tags=['User'])
 async def edit_user(updateuser: UserEdit, current_user: User = Depends(get_current_active_user)):
     """
@@ -122,11 +123,16 @@ async def reset_password_link(reset_password_token: str, new_password: str, repe
         raise HTTPException(status_code=400, detail="Invalid token")
     user = await get_user(username)
     if not user:
-        raise HTTPException(status_code=404,detail="The user with this username does not exist in the system.",)
+        raise HTTPException(status_code=404,detail="The user with this username does not exist in the system.")
     if user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
-    # update password in db
-    return reset_password_token
+    if new_password != repeat_password:
+        raise HTTPException(status_code=400,detail="Password doesnot match")
+    if await update_user_password(new_password, user):
+        await notify_on_password_change(user)
+        return reset_password_token
+    else:
+        raise HTTPException(status_code=status.HTTP_504_GATEWAY_TIMEOUT,detail="An unknown error occured.")
 
 
 @router.get("/users/user/{user_id}/", response_model=BasicUser, tags=["User"])
