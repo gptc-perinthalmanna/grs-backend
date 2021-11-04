@@ -98,7 +98,8 @@ async def update_user_fields(updateuser: UserEdit, user: User) -> Optional[UserI
 
 async def update_user_password(new_password: str, user: User):
     hashed_password = get_password_hash(new_password)
-    await userDB.update_password_to_db(hashed_password, user)
+    userindb = await userDB.get_user_from_id(user.key)
+    await userDB.update_password_to_db(hashed_password, userindb)
     return True
 
 

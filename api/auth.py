@@ -51,14 +51,14 @@ async def create_user(new_user: UserCreate):
 
 
 @router.post("/custom/register/", response_model=User, tags=['User'])
-async def register_user_from_server_data(user_create: CustomUserCreate, account_id: int):
+async def register_user_from_server_data(user_create: CustomUserCreate):
     """
     Create new user from server data.
     """
     if user_create.account_type == AccountType.student:
-        new_user = get_user_details_from_student_id(account_id)
+        new_user = get_user_details_from_student_id(user_create.id)
     elif user_create.account_type == AccountType.teacher:
-        new_user = get_user_details_from_pen_number(account_id)
+        new_user = get_user_details_from_pen_number(user_create.id)
     else:
         raise HTTPException(status_code=400,detail="Invalid account type.")
 
