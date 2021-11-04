@@ -90,14 +90,18 @@ async def add_users_from_csv(type: str, file: bytes = File(...), current_user: U
     return {'message': message }
 
 
-@router.get("/admin/test/")
-async def test_route():
+@router.get("/admin/test/", include_in_schema=False)
+async def test_route(current_user: User = Depends(get_current_active_user)):
+    if not current_user.type in admin_access_permission:
+        raise HTTPException(status_code=403, detail="Admin access only")
     await remove_all_users_from_db()
     return {'message': 'test route'}
 
 
 @router.get("/admin/reports/posts")
-async def get_post_reports():
+async def get_post_reports(current_user: User = Depends(get_current_active_user)):
+    if not current_user.type in admin_access_permission:
+        raise HTTPException(status_code=403, detail="Admin access only")
     status_report = {}
     user_post_map = {}
     this_day = {}
