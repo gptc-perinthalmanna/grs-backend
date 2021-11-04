@@ -88,8 +88,8 @@ async def add_users_from_csv(type: str, file: bytes = File(...), current_user: U
             print(f"{user.username} - {e}")
     
     return {'message': message }
-    
-    
+
+
 @router.get("/admin/test/")
 async def test_route():
     await remove_all_users_from_db()

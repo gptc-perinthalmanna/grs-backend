@@ -36,6 +36,7 @@ class AccountType(str, Enum):
     parent = 'parent'
     other = 'other'
 
+
 class BasicUser(BaseModel):
     key: UUID4
     username: str
@@ -45,6 +46,7 @@ class BasicUser(BaseModel):
     designation: Optional[Designation] = None
     type: AccountType
     gender: Optional[Gender]
+
 
 class User(BaseModel):
     key: UUID4
@@ -64,6 +66,7 @@ class User(BaseModel):
     designation: Optional[Designation] = None
     createdAt: Optional[datetime.datetime] = None
     updatedAt: Optional[datetime.datetime] = None
+    force_password_change: Optional[bool] = False
 
     @validator('designation')
     def check_user_is_staff(cls, v, values, **kwargs):
@@ -110,6 +113,7 @@ class CustomUserCreate(BaseModel):
         if 'password' in values and values['password'] == v:
             return v
         raise ValueError('Passwords doesnot match')
+
 
 class UserEdit(User):
     username: str
