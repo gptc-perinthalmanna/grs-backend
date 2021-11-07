@@ -158,7 +158,7 @@ async def get_post_reports(current_user: User = Depends(get_current_active_user)
     return {"posts" : {"all" : status_report, "this_day" :  this_day, "this_week": this_week, "this_month":this_month, "this_year":this_year}, "users": user_type_report}
 
 
-@router.get("/admin/connections/telegram/add-chat", tags=tagnames)
+@router.post("/admin/connections/telegram/add-chat/{chat_id}/", tags=tagnames)
 async def add_telegram_chat(chat_id: str, current_user: User = Depends(get_current_active_user)):
     if not current_user.type in admin_access_permission:
         raise HTTPException(status_code=403, detail="Admin access only")
