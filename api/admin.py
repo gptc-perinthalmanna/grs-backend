@@ -6,6 +6,7 @@ from starlette import status
 from models.user import AccountType, UserInDB, User
 from models.posts import PostInDB, NewResponse, PostResponse, Status
 from services.data_migration import convert_staffs_csv_to_pydantic, convert_students_csv_to_pydantic, remove_all_users_from_db
+from services.db.deta.configDB import put_chat_id
 from services.db.deta.postsDB import get_all_posts_from_db, get_post_from_id, put_post_to_db
 from services.db.deta.userDB import get_all_users_from_db, get_user_from_id, get_user_from_username_db
 from services.notifications import notify_on_new_response
@@ -155,3 +156,12 @@ async def get_post_reports(current_user: User = Depends(get_current_active_user)
                 user_type_report[user_obj.type]["closed"] += 1
 
     return {"posts" : {"all" : status_report, "this_day" :  this_day, "this_week": this_week, "this_month":this_month, "this_year":this_year}, "users": user_type_report}
+
+
+@router.get("/admin/connections/telegram/add-chat", tags=tagnames)
+async def add_telegram_chat(chat_id: str, current_user: User = Depends(get_current_active_user)):
+    if not current_user.type in admin_access_permission:
+        raise HTTPException(status_code=403, detail="Admin access only")
+    
+    put_chat_id(chat_id)
+    return {"message": "Chat added successfully"}

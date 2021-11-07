@@ -1,8 +1,7 @@
-import datetime
+import datetime, re
 from typing import Optional, List, Any
 from pydantic import BaseModel, HttpUrl, validator, EmailStr, UUID4
 from enum import Enum
-import re
 
 
 class Token(BaseModel):

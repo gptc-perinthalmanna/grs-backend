@@ -13,16 +13,20 @@ from services.db.deta.configDB import get_chat_ids, get_config
 from draftjs_exporter.defaults import BLOCK_MAP, STYLE_MAP
 from draftjs_exporter.constants import BLOCK_TYPES, ENTITY_TYPES, INLINE_STYLES
 
-bot = telebot.TeleBot(get_config("telegram_bot_token"), parse_mode="MARKDOWN")
 
 def entity_fallback(props): return DOM.create_element("p", {}, props["children"])
 
 markdown_exporter = HTML({'block_map': dict(BLOCK_MAP, **{BLOCK_TYPES.FALLBACK : 'p',}), 'style_map': dict(STYLE_MAP, **{INLINE_STYLES.FALLBACK: 'p'}),'entity_decorators': { ENTITY_TYPES.FALLBACK: entity_fallback }})
+bot = telebot.TeleBot(get_config("telegram_bot_token"), parse_mode="MARKDOWN")
 
+def get_bot() -> telebot.TeleBot: return bot
 
 async def send_telegram_message(chat_id, notification) -> Optional[telebot.types.Message]:
-    try: return bot.send_message(chat_id, notification)
-    except Exception: return False
+    bot = get_bot()
+    try: return bot.send_message(int(chat_id), notification)
+    except Exception as e:
+        print(e)
+        return False
 
 
 async def send_email(email) -> bool: pass
@@ -60,6 +64,7 @@ async def notify_user(user: User) -> bool: pass
 
 
 async def notify_on_new_response(post: PostInDB, response_id: int):
+    bot = get_bot()
     notification = generate_post_message_for_tg(post)
     if notification and post.telegram:
         for chat in post.telegram: bot.edit_message_text(chat_id=chat.chat_id, message_id=chat.message_id, text=notification)
