@@ -1,0 +1,19 @@
+{
+    "name": "GRS Backend",
+    "description": "A simple Greivience redressal system using Fast API", 
+    "runtime": "python3.9",
+    "env": [
+        {
+            "key": "TELEGRAM_BOT_TOKEN",
+            "description": "Token of telegram bot for managing grievance cell. Token can be obtained while creating a new bot using @botfather in telegram.",
+            "value": "",
+            "required": false 
+        },
+        {
+            "key": "SENTRY_DSN",
+            "description": "Your python Sentry DSN Url for logging errors",
+            "value": "",
+            "required": false 
+        }
+    ]
+}
