@@ -31,15 +31,14 @@ async def get_all_posts(key: Optional[FetchQuery] = None, current_user: User = D
     if current_user.type not in permissions['post_view']:
         raise no_permission
     if not key:
-        return await get_all_posts_from_db()
+        posts, last_key, count =  await get_all_posts_from_db()
+        return PostListWithKey(posts=posts, last_key=last_key, count=count)
     posts, last_key, count = await get_all_posts_from_db(last_key=key.last_key, query=key.query)
     return PostListWithKey(posts=posts, last_key=last_key, count=count)
 
 
-
 @router.get('/posts/me/', response_model=PostListWithKey, tags=[tag])
 async def get_my_posts(key: Optional[UUID4] = None, current_user: User = Depends(get_current_active_user)):
-    print(key)
     posts, last, count = await get_my_posts_from_db(user_id=current_user.key, last_key=key)
     return PostListWithKey(posts=posts, last_key=last, count=count)
 

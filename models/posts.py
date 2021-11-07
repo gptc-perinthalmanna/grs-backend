@@ -88,7 +88,7 @@ class Telegram(BaseModel):
 
 class PostInDB(Post):
     telegram: Optional[List[Telegram]] = None
-    responses: Optional[List[PostResponse]]
+    responses: Optional[List[Optional[PostResponse]]]
 
 
 class PostResponseSerialized(PostResponse):
