@@ -70,7 +70,7 @@ class User(BaseModel):
 
     @validator('designation')
     def check_user_is_staff(cls, v, values, **kwargs):
-        if values['type'] != 'staff':
+        if values['type'] not in ['staff', 'admin']:
             if v is not None:
                 raise ValueError('Cannot Select Designation if you are not Staff of the college.')
         return v

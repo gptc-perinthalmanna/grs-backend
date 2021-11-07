@@ -9,11 +9,11 @@ from draftjs_exporter.dom import DOM
 from draftjs_exporter.html import HTML
 from models.posts import PostInDB, Post
 from services.db.deta.postsDB import update_post_db
-from services.db.deta.configDB import get_chat_ids
+from services.db.deta.configDB import get_chat_ids, get_config
 from draftjs_exporter.defaults import BLOCK_MAP, STYLE_MAP
 from draftjs_exporter.constants import BLOCK_TYPES, ENTITY_TYPES, INLINE_STYLES
 
-bot = telebot.TeleBot(settings.TELEGRAM_BOT_TOKEN, parse_mode="MARKDOWN")
+bot = telebot.TeleBot(get_config("telegram_bot_token"), parse_mode="MARKDOWN")
 
 def entity_fallback(props): return DOM.create_element("p", {}, props["children"])
 

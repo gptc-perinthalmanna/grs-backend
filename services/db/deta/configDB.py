@@ -9,9 +9,6 @@ config_db = deta.Base('config')
 
 def get_config(config_name):
     _config = config_db.get(config_name)
-    if _config is None:
-        put_config(config_name, {})
-        return {}
     return _config
 
 def put_config(config_name, config_value):
