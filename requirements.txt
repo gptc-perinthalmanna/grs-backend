@@ -36,3 +36,4 @@ draftjs_exporter
 pyTelegramBotAPI
 markdownify
 python-decouple
+sentry_sdk

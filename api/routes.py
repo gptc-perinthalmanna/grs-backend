@@ -12,6 +12,7 @@ def favicon():
     return responses.RedirectResponse(url='/static/icons/favicon.ico')
 
 
-@router.get('/test/', include_in_schema=False)
-def test():
+@router.get('/errortest/', include_in_schema=False)
+def error_test():
+    a = 12/0
     return "Ok"

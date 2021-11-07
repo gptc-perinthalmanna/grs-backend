@@ -4,8 +4,12 @@ from starlette.staticfiles import StaticFiles
 from api import auth, routes, posts, admin
 from config import settings
 import uvicorn
+import sentry_sdk
+from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
+from decouple import config
 
 app = fastapi.FastAPI(title="GRS", description="Grievance Redress system", version="0.1.0")
+sentry_sdk.init(dsn=config('SENTRY_DSN'))
 
 
 def configure():
@@ -21,6 +25,7 @@ def configure_middlewares():
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    app.add_middleware(SentryAsgiMiddleware)
 
 
 def configure_routing():
