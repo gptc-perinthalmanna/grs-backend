@@ -2,7 +2,7 @@ from starlette import status
 from fastapi import HTTPException
 from models.user import AccountType
 
-admin_access_permission = ['admin']
+admin_access_permission = [AccountType.admin]
 
 post_permissions = {
     'post_view': [AccountType.grievance_cell_memeber, AccountType.admin],
