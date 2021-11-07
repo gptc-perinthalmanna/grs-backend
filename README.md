@@ -1,3 +1,4 @@
+![cover](repo-cover.png)
 Grievance Redressal System - Fast API Backend
 
 ![Badge](https://badgen.net/github/last-commit/amjed-ali-k/grs-backend)
