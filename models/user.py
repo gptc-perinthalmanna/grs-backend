@@ -25,6 +25,13 @@ class Designation(str, Enum):
     principal = 'principal'
     student = 'student'
     officeStaff = 'officeStaff'
+    seniorSuperintendent = 'seniorSuperintendent'
+    seniorClerk = 'seniorClerk'
+    clerk = 'clerk'
+    seniorGradeTypist = 'seniorGradeTypist'
+    officeAttender = 'officeAttender'
+    librarian = 'librarian'
+
 
 
 class AccountType(str, Enum):
